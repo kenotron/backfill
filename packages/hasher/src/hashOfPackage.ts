@@ -15,9 +15,10 @@ export type PackageHashInfo = {
   filesHash: string;
   dependenciesHash: string;
   internalDependencies: string[];
+  packageRoot: string;
 };
 
-export function generateHashOfInternalPackages(
+export function combineHashOfInternalPackages(
   internalPackages: PackageHashInfo[]
 ): string {
   internalPackages.sort((a, b) => a.name.localeCompare(b.name));
@@ -32,7 +33,7 @@ export function generateHashOfInternalPackages(
   return hasher.digest("hex");
 }
 
-export async function getPackageHash(
+export async function calculatePackageHash(
   packageRoot: string,
   workspaces: WorkspaceInfo,
   yarnLock: ParsedYarnLock
@@ -74,7 +75,8 @@ export async function getPackageHash(
     name,
     filesHash,
     dependenciesHash,
-    internalDependencies
+    internalDependencies,
+    packageRoot
   };
 
   return packageHash;

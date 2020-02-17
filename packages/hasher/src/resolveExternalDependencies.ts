@@ -25,8 +25,8 @@ export function filterExternalDependencies(
   return externalDependencies;
 }
 
-function isDone(done: string[], key: string): boolean {
-  return done.indexOf(key) >= 0;
+function isCompleted(packageInfo: string[], key: string): boolean {
+  return packageInfo.indexOf(key) >= 0;
 }
 
 function isInQueue(queue: [string, string][], key: string): boolean {
@@ -39,7 +39,7 @@ function isInQueue(queue: [string, string][], key: string): boolean {
 
 export function addToQueue(
   dependencies: Dependencies | undefined,
-  done: string[],
+  completedDependencies: string[],
   queue: [string, string][]
 ): void {
   if (dependencies) {
@@ -47,7 +47,7 @@ export function addToQueue(
       const versionRangeSignature = nameAtVersion(name, versionRange);
 
       if (
-        !isDone(done, versionRangeSignature) &&
+        !isCompleted(completedDependencies, versionRangeSignature) &&
         !isInQueue(queue, versionRangeSignature)
       ) {
         queue.push([name, versionRange]);
@@ -66,7 +66,7 @@ export function resolveExternalDependencies(
     workspaces
   );
 
-  const done = [];
+  const completedDependencies = [];
   const doneRange = [];
   const queue = Object.entries(externalDependencies);
 
@@ -86,11 +86,11 @@ export function resolveExternalDependencies(
       const { version, dependencies } = lockFileResult;
 
       addToQueue(dependencies, doneRange, queue);
-      done.push(nameAtVersion(name, version));
+      completedDependencies.push(nameAtVersion(name, version));
     } else {
-      done.push(nameAtVersion(name, versionRange));
+      completedDependencies.push(nameAtVersion(name, versionRange));
     }
   }
 
-  return done;
+  return completedDependencies;
 }

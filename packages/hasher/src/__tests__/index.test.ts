@@ -62,7 +62,8 @@ describe("addToQueue", () => {
         name: packageToAdd,
         filesHash: "",
         dependenciesHash: "",
-        internalDependencies: []
+        internalDependencies: [],
+        packageRoot: ""
       }
     ];
 
